@@ -22,11 +22,10 @@ After implementing the features for this application, you should know the differ
 ## Setup
 
 1. Clone the repository to a directory of your choosing.
-2. Start the virtual environment with `pipenv install && pipenv shell`
-3. Load the migrations: `python3 manage.py migrate`
-4. Load the fixtures: `python3 manage.py loaddata fixtures`
-5. Consider creating a new user so you know what the password is. Then login with Postman or Thunder Client, so you can grab the auth token for the next part. You'll need to include it in your request header.
-6. Verify that the current functionality _(list below)_ works.
+1. Start the virtual environment with `pipenv install && pipenv shell`
+1. Load the migrations: `python3 manage.py migrate`
+1. Load the fixtures: `python3 manage.py loaddata fixtures`
+1. Verify that the current functionality _(list below)_ works.
 
 ## Current Capabilities
 
