@@ -2,7 +2,7 @@
 from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from favamealapi.views import register_user, login_user
+from favamealapi.views import register_user, check_user
 from favamealapi.views import RestaurantView, MealView
 
 # pylint: disable=invalid-name
@@ -15,6 +15,6 @@ router.register(r'meals', MealView, 'meal')
 urlpatterns = [
     path('', include(router.urls)),
     path('register', register_user),
-    path('login', login_user),
+    path('checkuser', check_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
 ]

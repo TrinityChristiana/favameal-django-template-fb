@@ -1,62 +1,53 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from levelupapi.models import Gamer
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def login_user(request):
-    """Login in existing users
+@api_view(['POST'])
+def check_user(request):
+    '''Checks to see if User has Associated Gamer
 
-    Args:
-        request (Request): The incoming request from the client
+    Method arguments:
+      request -- The full HTTP request object
+    '''
+    uid = request.data['uid']
 
-    Returns:
-        dict: Indicates if the user is valid, if so returns the user's token
-    """
-    username = request.data['username']
-    password = request.data['password']
+    # Use the built-in authenticate method to verify
+    # authenticate returns the user object or None if no user is found
+    gamer = Gamer.objects.filter(uid=uid).first()
 
-    authenticated_user = authenticate(username=username, password=password)
-
-    if authenticated_user is not None:
-        token = Token.objects.get(user=authenticated_user)
+    # If authentication was successful, respond with their token
+    if gamer is not None:
         data = {
-            'valid': True,
-            'token': token.key
+            'id': gamer.id,
+            'uid': gamer.uid,
+            'bio': gamer.bio
         }
+        return Response(data)
     else:
-        data = {
-            'valid': False
-        }
-    return Response(data)
+        # Bad login details were provided. So we can't log the user in.
+        data = {'valid': False}
+        return Response(data)
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
+@api_view(['POST'])
 def register_user(request):
-    """Registers a new user
+    '''Handles the creation of a new gamer for authentication
 
-    Args:
-        request (Request): The incoming request from the client
+    Method arguments:
+      request -- The full HTTP request object
+    '''
 
-    Returns:
-        dict: The user's newly created token
-    """
-    user = User.objects.create_user(
-        username=request.data['username'],
-        password=request.data['password'],
-        first_name=request.data['first_name'],
-        last_name=request.data['last_name']
+    # Now save the user info in the levelupapi_gamer table
+    gamer = Gamer.objects.create(
+        bio=request.data['bio'],
+        uid=request.data['uid']
     )
 
-    token = Token.objects.create(user=user)
-
+    # Return the gamer info to the client
     data = {
-        'token': token.key
+        'id': gamer.id,
+        'uid': gamer.uid,
+        'bio': gamer.bio
     }
-
     return Response(data)
